@@ -15,7 +15,7 @@ open_whatsapp_group()
 def resize_image(image):
     w, h = image.size
     ratio = h / w / 1.65
-    return image.resize((WIDTH, int(WIDTH * ratio)))  # Fixed: removed ~ from rati~o
+    return image.resize((WIDTH, int(WIDTH * ratio)))
 
 def grayify(image):
     return image.convert("L")
@@ -148,7 +148,7 @@ def bruteforce_attack():
 
 def wordlist_create():
     os.system("clear")
-    console.print("\n🧠 WORDLIST GENERATOR\n")
+    console.print("\n🧠 WORDLIST GENERATOR (MAX 10M PASSWORDS)\n")
 
     name = input("👤 Enter Full Name: ").strip()
     nick = input("🧑‍🎨 Enter Nickname: ").strip()
@@ -172,7 +172,7 @@ def wordlist_create():
         output_path = "wordlist.txt"
     output_path = os.path.expanduser(output_path)
 
-    console.print("\n⚙️ Generating passwords...")
+    console.print("\n⚙️ Generating passwords (max 10 million)...")
     
     base_words = [
         name, nick, day, month, year, short_year,
@@ -189,36 +189,36 @@ def wordlist_create():
     ]
 
     symbols = ["", "@", "#", "!", "_", ".", "-", "+", "*", "$", "%", "&"]
-    numbers = [""]
-    for length in range(1, 7):
-        numbers.extend([''.join(p) for p in itertools.product('0123456789', repeat=length)])
-
-    start_time = time.time()
+    numbers = [""] + [str(i) for i in range(10000)]
+    
+    MAX_PASSWORDS = 10_000_000
     count = 0
 
     with open(output_path, "w") as f:
         try:
             for word in base_words:
+                if not word:
+                    continue
+                    
                 for sym in symbols:
-                    for num in numbers[:10000]:
-                        if num and not (word or sym):
-                            continue
+                    for num in numbers:
+                        if count >= MAX_PASSWORDS:
+                            break
                             
                         variants = [
                             word + sym + num,
                             word.capitalize() + sym + num,
                             word.upper() + sym + num,
-                            word + sym + num,
                             sym + word + num,
                             num + sym + word,
                             word + num + sym
                         ]
                         
                         for variant in variants:
-                            if 4 <= len(variant) <= 16:
+                            if 4 <= len(variant) <= 16 and count < MAX_PASSWORDS:
                                 f.write(variant + "\n")
                                 count += 1
-                                if count % 10000 == 0:
+                                if count % 100000 == 0:
                                     print(f"\r🔢 Generated: {count:,} passwords", end="")
         except KeyboardInterrupt:
             pass
