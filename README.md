@@ -1,4 +1,4 @@
-👇 RUN THESE FOLLOWING COMMANDS 👇
+👇 RUN THESE FOLLOWING COMMANDS👇
 
 pkg install git 
 
